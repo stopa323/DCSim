@@ -48,7 +48,7 @@ namespace Game.Managers
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100f, floorLayerMask))
             {
-                obj.transform.position = hit.point + Vector3.up;
+                obj.transform.position = Utils.SnapToGrid(hit.point + Vector3.up, 1f);
             }
         }
     }
