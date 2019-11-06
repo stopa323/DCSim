@@ -15,14 +15,17 @@ namespace Game.Managers
         #region Private Members
         private Camera camera;
 
+        /* Reference to device currently being placed */
+        private GameObject deviceInstance;
+
         /* Layer mask under 8th index */
         private const int floorLayerMask = 1 << 8;
         #endregion
 
         #region Public Methods
-        public void Test()
+        public void StartDeviceConstruction(GameObject device)
         {
-            Debug.Log("Event called");
+            deviceInstance = Instantiate(device);
         }
         #endregion
 
@@ -41,10 +44,10 @@ namespace Game.Managers
 
         private void Update()
         {
-            
+            if (null != deviceInstance) { repositionDevice(); }
         }
 
-        private void repositionBluerprintObject()
+        private void repositionDevice()
         {
             /* Moves blueprint object to position where mouse cursor is 
              * touching floor surface. 
@@ -53,7 +56,7 @@ namespace Game.Managers
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100f, floorLayerMask))
             {
-                //obj.transform.position = Utils.SnapToGrid(hit.point + Vector3.up, 1f);
+                deviceInstance.transform.position = Utils.SnapToGrid(hit.point + Vector3.up, 1f);
             }
         }
     }

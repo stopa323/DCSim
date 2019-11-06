@@ -1,12 +1,14 @@
 ﻿using Game.Events;
+using UnityEngine;
 
 public class DevicePurchaseButton : BaseButton
 {
-    public VoidEvent E_Test;
+    public GameObject DevicePrefab;
+    public GameObjectEvent OnDeviceSelected;
 
     public override void OnCursorClick()
     {
         base.OnCursorClick();
-        E_Test.Raise();
+        OnDeviceSelected.Raise(DevicePrefab);
     }
 }

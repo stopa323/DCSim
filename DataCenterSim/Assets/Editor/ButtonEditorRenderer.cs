@@ -35,8 +35,11 @@ namespace Editor
         {
             DevicePurchaseButton btn = target as DevicePurchaseButton;
 
-            btn.E_Test = (VoidEvent)EditorGUILayout.ObjectField("OnClick Event:",
-                btn.E_Test, typeof(VoidEvent), true);
+            btn.OnDeviceSelected = (GameObjectEvent)EditorGUILayout.ObjectField("OnClick Event:",
+                btn.OnDeviceSelected, typeof(GameObjectEvent), true);
+
+            btn.DevicePrefab = (GameObject)EditorGUILayout.ObjectField("Device Prefab:",
+                btn.DevicePrefab, typeof(GameObject), true);
 
             base.OnInspectorGUI();
         }

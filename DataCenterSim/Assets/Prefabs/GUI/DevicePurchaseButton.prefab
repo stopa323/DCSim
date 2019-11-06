@@ -270,4 +270,6 @@ MonoBehaviour:
   hoverSound: {fileID: 8300000, guid: ddbb39f14ed52254d9035f22da1c7b90, type: 3}
   clickSound: {fileID: 8300000, guid: c39593965de49fd41be2063a46963114, type: 3}
   errorSound: {fileID: 8300000, guid: bd6767f39921c62419f46ae8f7758c99, type: 3}
-  E_Test: {fileID: 11400000, guid: d9f340b82859a684091881df6b3f4ca3, type: 2}
+  DevicePrefab: {fileID: 1175784377988811328, guid: d8c163c487c5eb845885fd297ccb2ec4,
+    type: 3}
+  OnDeviceSelected: {fileID: 11400000, guid: 8657348b77e10034dba55ade3798cb76, type: 2}
