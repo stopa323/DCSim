@@ -5,7 +5,7 @@ namespace Game.Managers
     public class ConstructionManager : BaseManager
     {
         #region Editor Variables
-        [SerializeField] private GameObject prefab;
+        
         #endregion
 
         #region Public Members
@@ -13,11 +13,17 @@ namespace Game.Managers
         #endregion
 
         #region Private Members
-        private GameObject obj;
         private Camera camera;
 
         /* Layer mask under 8th index */
         private const int floorLayerMask = 1 << 8;
+        #endregion
+
+        #region Public Methods
+        public void Test()
+        {
+            Debug.Log("Event called");
+        }
         #endregion
 
         protected override void Awake()
@@ -25,7 +31,6 @@ namespace Game.Managers
             base.Awake();
 
             camera = Camera.main;
-            obj = Instantiate(prefab);
         }
 
         protected override void initInstance()
@@ -36,7 +41,7 @@ namespace Game.Managers
 
         private void Update()
         {
-            repositionBluerprintObject();
+            
         }
 
         private void repositionBluerprintObject()
@@ -48,7 +53,7 @@ namespace Game.Managers
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100f, floorLayerMask))
             {
-                obj.transform.position = Utils.SnapToGrid(hit.point + Vector3.up, 1f);
+                //obj.transform.position = Utils.SnapToGrid(hit.point + Vector3.up, 1f);
             }
         }
     }
