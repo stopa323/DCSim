@@ -44,7 +44,13 @@ namespace Game.Managers
 
         private void Update()
         {
-            if (null != deviceInstance) { repositionDevice(); }
+            /* Handle device placement.
+             * TODO: consider replacing with switch on STATE for readability.
+             */
+            if (isInPlanningMode()) {
+                if (Input.GetMouseButtonDown(1)) { exitPlanningMode(); }
+                else { repositionDevice(); }
+            }
         }
 
         private void repositionDevice()
@@ -59,5 +65,13 @@ namespace Game.Managers
                 deviceInstance.transform.position = Utils.SnapToGrid(hit.point + Vector3.up, 1f);
             }
         }
+
+        private void exitPlanningMode()
+        {
+            Destroy(deviceInstance);
+            deviceInstance = null;
+        }
+
+        private bool isInPlanningMode() { return null != deviceInstance; }
     }
 }
