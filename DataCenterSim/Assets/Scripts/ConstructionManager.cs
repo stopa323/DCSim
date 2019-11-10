@@ -5,7 +5,9 @@ namespace Game.Managers
     public class ConstructionManager : BaseManager
     {
         #region Editor Variables
-        
+        [Header("Orders")]
+        [SerializeField] private Transform orderListContainer;
+        [SerializeField] private GameObject orderListPrefab;
         #endregion
 
         #region Public Members
@@ -17,6 +19,10 @@ namespace Game.Managers
 
         /* Reference to device currently being placed */
         private GameObject deviceInstance;
+
+        /* Reference to OrderList */
+        private GameObject orderListInstance;
+        private OrderController orderController;
 
         /* Layer mask under 8th index */
         private const int floorLayerMask = 1 << 8;
@@ -49,7 +55,8 @@ namespace Game.Managers
              * TODO: consider replacing with switch on STATE for readability.
              */
             if (isInPlanningMode()) {
-                if (Input.GetMouseButtonDown(1)) { exitPlanningMode(); }
+                if (Input.GetMouseButtonDown(Utils.KEY_LMB)) { addDeviceToOrderList(); }
+                else if (Input.GetMouseButtonDown(Utils.KEY_RMB)) { exitPlanningMode(); }
                 else { repositionDevice(); }
             }
         }
@@ -67,6 +74,16 @@ namespace Game.Managers
             }
         }
 
+        private void addDeviceToOrderList()
+        {
+            if (null == orderListInstance)
+            {
+                orderListInstance = Instantiate(orderListPrefab, orderListContainer);
+                orderController = orderListInstance.GetComponent<OrderController>();
+            }
+            orderController.AddOrderItem();
+        }
+
         private void exitPlanningMode()
         {
             Destroy(deviceInstance);
@@ -74,5 +91,6 @@ namespace Game.Managers
         }
 
         private bool isInPlanningMode() { return null != deviceInstance; }
+
     }
 }
