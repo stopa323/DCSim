@@ -26,6 +26,7 @@ namespace Game.Managers
         public void StartDeviceConstruction(GameObject device)
         {
             deviceInstance = Instantiate(device);
+            deviceInstance.name = "DeviceBlueprint";
         }
         #endregion
 
