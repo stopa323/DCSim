@@ -11,8 +11,8 @@ public class OrderController : MonoBehaviour
 
     private struct OrderTuple
     {
-        GameObject gui_ref; // Reference to order list GUI element
-        GameObject obj_ref; // Reference to 3d object rendered on the scene
+        public GameObject gui_ref; // Reference to order list GUI element
+        public GameObject obj_ref; // Reference to 3d object rendered on the scene
 
         public OrderTuple(GameObject guiElement, GameObject sceneObject)
         {
@@ -50,6 +50,15 @@ public class OrderController : MonoBehaviour
         foreach (OrderTuple order in orders)
         {
             // Handle device spawn here
+        }
+        Destroy(gameObject);
+    }
+
+    public void DiscardOrder()
+    {
+        foreach (OrderTuple order in orders)
+        {
+            Destroy(order.obj_ref);
         }
         Destroy(gameObject);
     }
