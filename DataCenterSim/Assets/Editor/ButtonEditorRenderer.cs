@@ -24,6 +24,9 @@ namespace Editor
             btn.errorSound = (AudioClip)EditorGUILayout.ObjectField("Error Sound:",
                 btn.errorSound, typeof(AudioClip), true);
 
+            btn.OnClickVoidEvent = (VoidEvent)EditorGUILayout.ObjectField("OnClick (void) Event:",
+                btn.OnClickVoidEvent, typeof(VoidEvent), true);
+
             base.OnInspectorGUI();
         }
     }

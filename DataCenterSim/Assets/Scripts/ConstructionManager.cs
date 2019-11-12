@@ -81,7 +81,15 @@ namespace Game.Managers
                 orderListInstance = Instantiate(orderListPrefab, orderListContainer);
                 orderController = orderListInstance.GetComponent<OrderController>();
             }
-            orderController.AddOrderItem();
+            
+            if (orderController.hasFreeSlot())
+            {
+                GameObject dev_bp = Instantiate(deviceInstance);
+                dev_bp.name = "ScheduledDevice";
+
+                orderController.AddOrderItem(dev_bp);
+            }
+            else { Debug.LogWarning("Maximum items per order limit exceeded"); }
         }
 
         private void exitPlanningMode()
