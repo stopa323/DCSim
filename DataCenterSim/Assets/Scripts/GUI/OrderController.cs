@@ -50,14 +50,15 @@ public class OrderController : MonoBehaviour
     
     public void MakeOrder()
     {
-        foreach (OrderTuple order in orders)
+        foreach (OrderTuple o in orders)
         {
-            BaseDevice device = order.obj_ref.GetComponent<BaseDevice>();
+            BaseDevice device = o.obj_ref.GetComponent<BaseDevice>();
             if (!device) { throw new MissingComponentException("BaseDevice"); }
             device.OnSpawn(markerCanvas);
         }
 
-        OrderManager.Instance.AddOrder();
+        Order order = new Order();
+        OrderManager.Instance.AddOrder(order);
 
         Destroy(gameObject);
     }
