@@ -23,6 +23,8 @@ public class OrderController : MonoBehaviour
 
     private List<OrderTuple> orders;
 
+    private GameObject markerCanvas;
+
     #region Public Methods
     public bool hasFreeSlot()
     {
@@ -49,7 +51,9 @@ public class OrderController : MonoBehaviour
     {
         foreach (OrderTuple order in orders)
         {
-            // Handle device spawn here
+            BaseDevice device = order.obj_ref.GetComponent<BaseDevice>();
+            if (!device) { throw new MissingComponentException("BaseDevice"); }
+            device.OnSpawn(markerCanvas);
         }
         Destroy(gameObject);
     }
@@ -69,6 +73,8 @@ public class OrderController : MonoBehaviour
         orderContainer.sizeDelta = new Vector2(
             orderContainer.sizeDelta.x, orderItemHeight);
         orders = new List<OrderTuple>(MAX_ORDERS);
+
+        markerCanvas = GameObject.FindWithTag("MarkerCanvas");
     }
 
 }
