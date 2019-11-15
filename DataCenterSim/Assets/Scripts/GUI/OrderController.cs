@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Game.Managers;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class OrderController : MonoBehaviour
@@ -55,6 +56,9 @@ public class OrderController : MonoBehaviour
             if (!device) { throw new MissingComponentException("BaseDevice"); }
             device.OnSpawn(markerCanvas);
         }
+
+        OrderManager.Instance.AddOrder();
+
         Destroy(gameObject);
     }
 
@@ -74,6 +78,7 @@ public class OrderController : MonoBehaviour
             orderContainer.sizeDelta.x, orderItemHeight);
         orders = new List<OrderTuple>(MAX_ORDERS);
 
+        // TODO: Move such read-only references to some kind of singleton
         markerCanvas = GameObject.FindWithTag("MarkerCanvas");
     }
 
