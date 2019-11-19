@@ -368,3 +368,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   progressImage: {fileID: 1724744144106664941}
   timeText: {fileID: 3635738890715483351}
+  nameText: {fileID: 4752293742358503190}
+  OnOrderDelivered: {fileID: 11400000, guid: a9d7677e6ebda06458e7aab7f3856b0f, type: 2}

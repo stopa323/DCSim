@@ -1,4 +1,5 @@
 ﻿using Game.Managers;
+using Game.Structures;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,7 +58,7 @@ public class OrderController : MonoBehaviour
             device.OnSpawn(markerCanvas);
         }
 
-        Order order = new Order();
+        Order order = new Order(OrderManager.Instance.GetOrderId(), 5f);
         OrderManager.Instance.AddOrder(order);
 
         Destroy(gameObject);

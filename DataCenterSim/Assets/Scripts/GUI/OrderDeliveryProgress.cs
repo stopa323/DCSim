@@ -1,31 +1,43 @@
-﻿using UnityEngine;
+﻿using Game.Events;
+using Game.Structures;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class OrderDeliveryProgress : MonoBehaviour
 {
     public Image progressImage;
     public Text timeText;
+    public Text nameText;
+
+    public OrderEvent OnOrderDelivered;
 
     private bool started = false;
     private float remainingTime = 0;
-    private float totalTime = 0;
 
-    public void StartTimer(float elapsedTime)
+    private Order order;
+
+    public void Populate(Order order)
     {
-        started = true;
-        totalTime = elapsedTime;
-        remainingTime = elapsedTime;
+        this.order = order;
+        remainingTime = order.DeliveryTime;
+        nameText.text = order.Name;
     }
+
+    public void StartTimer() { started = true; }
 
     private void LateUpdate()
     {
         if (!started) return;
 
-        remainingTime = Mathf.Clamp(remainingTime - Time.deltaTime, 0, totalTime);
-        timeText.text = remainingTime.ToString() + "s";  // TODO: use formatter
+        remainingTime = Mathf.Clamp(remainingTime - Time.deltaTime, 0, order.DeliveryTime);
+        timeText.text = string.Format("{0}s", remainingTime);
 
-        progressImage.fillAmount = (totalTime - remainingTime) / totalTime;
+        progressImage.fillAmount = (order.DeliveryTime - remainingTime) / order.DeliveryTime;
 
-        if (0 == remainingTime) { Destroy(gameObject); }
+        if (0 == remainingTime)
+        {
+            OnOrderDelivered.Raise(order);
+            Destroy(gameObject);
+        }
     }
 }

@@ -1,15 +1,8 @@
-﻿using UnityEngine;
+﻿using Game.Structures;
+using UnityEngine;
 
 namespace Game.Managers
 {
-    // TODO: Move to separate file containing order-related structures
-    public struct Order
-    {
-        public string Name;
-
-        private float timer;
-    }
-
     public class OrderManager : BaseManager
     {
         #region Editor Variables
@@ -22,12 +15,29 @@ namespace Game.Managers
         public static OrderManager Instance { get; private set; }
         #endregion
 
+        #region Private Members
+        private static int nextOrderId = 0;
+        #endregion
+
         #region Public Methods
+        public int GetOrderId()
+        {
+            /** Returns next free order ID */
+            return nextOrderId++;
+        }
+
         public void AddOrder(Order order)
         {
             GameObject delivery = Instantiate(orderDeliveryPrefab, orderDeliveryContainer);
             OrderDeliveryProgress progress = delivery.GetComponent<OrderDeliveryProgress>();
-            progress.StartTimer(10);
+
+            progress.Populate(order);
+            progress.StartTimer();
+        }
+
+        public void OnOrderDelivered(Order order)
+        {
+            Debug.Log(string.Format("{0} delivered!", order.Name));
         }
         #endregion
 
