@@ -9,6 +9,10 @@ namespace Game.Managers
         [Header("Orders")]
         [SerializeField] private Transform orderDeliveryContainer;
         [SerializeField] private GameObject orderDeliveryPrefab;
+
+        [Header("Package")]
+        [SerializeField] private Transform packageMeetingPoint;
+        [SerializeField] private GameObject packagePrefab;
         #endregion
 
         #region Public Members
@@ -37,7 +41,10 @@ namespace Game.Managers
 
         public void OnOrderDelivered(Order order)
         {
-            Debug.Log(string.Format("{0} delivered!", order.Name));
+            Debug.Log(string.Format("Sound the alarm! {0} is delivered!", order.Name));
+
+            GameObject package = Instantiate(packagePrefab, packageMeetingPoint);
+            package.name = string.Format("{0}_package", order.Name);
         }
         #endregion
 
