@@ -58,7 +58,7 @@ public class OrderController : MonoBehaviour
             device.OnSpawn(markerCanvas);
         }
 
-        Order order = new Order(OrderManager.Instance.GetOrderId(), 5f);
+        Order order = new Order(OrderManager.Instance.GetOrderId(), 1f);
         OrderManager.Instance.AddOrder(order);
 
         Destroy(gameObject);

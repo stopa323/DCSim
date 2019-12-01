@@ -9,10 +9,7 @@ namespace Game.Managers
         [Header("Orders")]
         [SerializeField] private Transform orderDeliveryContainer;
         [SerializeField] private GameObject orderDeliveryPrefab;
-
-        [Header("Package")]
-        [SerializeField] private Transform packageMeetingPoint;
-        [SerializeField] private GameObject packagePrefab;
+        [SerializeField] private PackageStoreManager store;
         #endregion
 
         #region Public Members
@@ -42,9 +39,8 @@ namespace Game.Managers
         public void OnOrderDelivered(Order order)
         {
             Debug.Log(string.Format("Sound the alarm! {0} is delivered!", order.Name));
-
-            GameObject package = Instantiate(packagePrefab, packageMeetingPoint);
-            package.name = string.Format("{0}_package", order.Name);
+            for (int i = 0; i < 5; i++)
+                store.PushPackage();
         }
         #endregion
 
@@ -54,5 +50,12 @@ namespace Game.Managers
             else if (this != Instance) { Destroy(gameObject); }
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.O))
+            {
+                store.PopPackage(new Vector3Int(0,0,0));
+            }
+        }
     }
 }
