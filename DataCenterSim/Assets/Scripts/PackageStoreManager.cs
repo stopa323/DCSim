@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.Structures;
+using UnityEngine;
 
 public class PackageStoreManager : MonoBehaviour
 {
@@ -34,6 +35,26 @@ public class PackageStoreManager : MonoBehaviour
             placeAtSlot(package, freeSlot);
         }
         catch (UnityException err) { Debug.LogError(err.Message); }
+    }
+
+    public void PushOrder(Order order)
+    {
+        foreach(OrderSubjectTuple tup in order.Items)
+        {
+            GameObject package = Instantiate(packagePrefab, gameObject.transform);
+            tup.AssignPackage(package);
+            package.name = string.Format("{0}_package", 1);
+
+            try
+            {
+                Vector3Int freeSlot = getFreeSlot();
+                placeAtSlot(package, freeSlot);
+            }
+            catch (UnityException err) {
+                Debug.LogError(err.Message);
+                return;
+            }
+        }
     }
 
     public void PopPackage(Vector3Int slot)
