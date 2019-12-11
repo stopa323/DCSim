@@ -48,13 +48,5 @@ namespace Game.Managers
             if (null == Instance) { Instance = this; }
             else if (this != Instance) { Destroy(gameObject); }
         }
-
-        private void Update()
-        {
-            if (Input.GetKeyUp(KeyCode.O))
-            {
-                store.PopPackage(new Vector3Int(0,0,0));
-            }
-        }
     }
 }

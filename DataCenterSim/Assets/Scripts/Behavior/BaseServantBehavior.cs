@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.JobSystem;
+using UnityEngine;
 
 public class BaseServantBehavior : MonoBehaviour
 {
@@ -15,8 +16,9 @@ public class BaseServantBehavior : MonoBehaviour
     #region Public API
     public bool FindJob()
     {
-        var b = Random.Range(0f, 100f);
-        return b < 1f;
+        var job = JobManager.Instance.GetJob();
+        if (job != null) { return true; }
+        else { return false; }
     }
 
     public void StartMoving()

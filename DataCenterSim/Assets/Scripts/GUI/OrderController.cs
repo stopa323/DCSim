@@ -38,7 +38,7 @@ public class OrderController : MonoBehaviour
     
     public void MakeOrder()
     {
-        foreach (OrderSubjectTuple tup in order.Items)
+        foreach (Package tup in order.Items)
         {
             BaseDevice device = tup.OrderedItem.GetComponent<BaseDevice>();
             if (!device) { throw new MissingComponentException("BaseDevice"); }
@@ -52,7 +52,7 @@ public class OrderController : MonoBehaviour
 
     public void DiscardOrder()
     {
-        foreach (OrderSubjectTuple tup in order.Items) { Destroy(tup.OrderedItem); }
+        foreach (Package tup in order.Items) { Destroy(tup.OrderedItem); }
         Destroy(gameObject);
     }
     #endregion

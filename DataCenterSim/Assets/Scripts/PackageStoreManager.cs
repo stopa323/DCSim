@@ -1,4 +1,5 @@
-﻿using Game.Structures;
+﻿using Game.JobSystem;
+using Game.Structures;
 using UnityEngine;
 
 public class PackageStoreManager : MonoBehaviour
@@ -20,35 +21,29 @@ public class PackageStoreManager : MonoBehaviour
     private float platformSizeX;
     private float platformSizeZ;
 
-    private GameObject[,,] platformSlots;
+    private Package[,,] platformSlots;
     #endregion
 
     #region Public Members
-    public void PushPackage()
-    {
-        GameObject package = Instantiate(packagePrefab, gameObject.transform);
-        package.name = string.Format("{0}_package", 1);
-
-        try
-        {
-            Vector3Int freeSlot = getFreeSlot();
-            placeAtSlot(package, freeSlot);
-        }
-        catch (UnityException err) { Debug.LogError(err.Message); }
-    }
-
     public void PushOrder(Order order)
     {
-        foreach(OrderSubjectTuple tup in order.Items)
+        foreach(Package package in order.Items)
         {
-            GameObject package = Instantiate(packagePrefab, gameObject.transform);
-            tup.AssignPackage(package);
-            package.name = string.Format("{0}_package", 1);
-
             try
             {
+                // This will throw exception if no free slot is found
                 Vector3Int freeSlot = getFreeSlot();
+
+                // Update Package with object and place to store
+                GameObject packageObj = Instantiate(packagePrefab, gameObject.transform);
+                packageObj.name = string.Format("{0}_package", 1);
+                package.AssignPackage(packageObj);
+
                 placeAtSlot(package, freeSlot);
+
+                // Add new job to the manager
+                Job deliverPartsJob = new Job();
+                JobManager.Instance.ScheduleJob(deliverPartsJob);
             }
             catch (UnityException err) {
                 Debug.LogError(err.Message);
@@ -60,14 +55,14 @@ public class PackageStoreManager : MonoBehaviour
     public void PopPackage(Vector3Int slot)
     {
         Debug.Log("Popping...");
-        if (!platformSlots[slot.x, slot.y, slot.z]) return;
+        if (platformSlots[slot.x, slot.y, slot.z] == null) return;
 
-        Destroy(platformSlots[slot.x, slot.y, slot.z]);
+        Destroy(platformSlots[slot.x, slot.y, slot.z].Object);
 
         for (int y = slot.y + 1; y < heightCap; y++)
         {
             // Break if there is nothing at current position
-            if (!platformSlots[slot.x, y, slot.z]) break;
+            if (platformSlots[slot.x, y, slot.z] == null) break;
 
             // Move package one slot down
             placeAtSlot(platformSlots[slot.x, y, slot.z], 
@@ -95,14 +90,14 @@ public class PackageStoreManager : MonoBehaviour
         for (int y = 0; y < heightCap; y++)
             for (int x = 0; x < rowCap; x++)
                 for (int z = 0; z < colCap; z++)
-                    if (!platformSlots[x, y, z]) return new Vector3Int(x, y, z);
+                    if (platformSlots[x, y, z] == null) return new Vector3Int(x, y, z);
         throw new UnityException("No free slots on platform");
     }
     
-    private void placeAtSlot(GameObject package, Vector3Int slot)
+    private void placeAtSlot(Package package, Vector3Int slot)
     {
         platformSlots[slot.x, slot.y, slot.z] = package;
-        package.transform.localPosition = getPositionFromSlot(slot);
+        package.Object.transform.localPosition = getPositionFromSlot(slot);
     }
     #endregion
 
@@ -112,7 +107,7 @@ public class PackageStoreManager : MonoBehaviour
         platformSizeX = rowCap * (packageSize + packageInterspace) - packageInterspace;
         platformSizeZ = colCap * (packageSize + packageInterspace) - packageInterspace;
 
-        platformSlots = new GameObject[rowCap, colCap, heightCap];
+        platformSlots = new Package[rowCap, colCap, heightCap];
     }
     #endregion
 }

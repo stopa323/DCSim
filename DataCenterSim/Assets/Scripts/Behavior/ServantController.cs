@@ -11,7 +11,8 @@ public class ServantController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
     }
 
-    void Update()
+    public void MoveTo(Vector3 destination)
     {
+        agent.SetDestination(destination);
     }
 }
