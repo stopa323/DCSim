@@ -9,15 +9,8 @@ namespace Game.Servants
         {
             base.OnSLStateNoTransitionUpdate(animator, stateInfo, layerIndex);
 
-            // Find job to do
-            var jobFound = m_MonoBehaviour.FindJob();
-
-            // Switch state if found
-            if (jobFound)
-            {
-                Debug.Log("Job found!");
-                m_MonoBehaviour.StartMoving();
-            }
+            // Switch state if job found
+            if (m_MonoBehaviour.FindJob()) { m_MonoBehaviour.StartWorking(); }
         }
     }
 }

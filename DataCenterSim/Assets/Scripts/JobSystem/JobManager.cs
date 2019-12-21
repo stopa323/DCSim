@@ -1,12 +1,13 @@
-﻿using Game.Managers;
+﻿using UnityEngine;
+using Game.Managers;
 using System.Collections.Generic;
-using UnityEngine;
+
 
 namespace Game.JobSystem
 {
     public class JobManager : BaseManager
     {
-        private List<Job> jobQueue;
+        private Queue<Job> jobQueue;
 
         public static JobManager Instance { get; private set; }
 
@@ -19,21 +20,22 @@ namespace Game.JobSystem
         protected override void Awake()
         {
             base.Awake();
-            jobQueue = new List<Job>();
+            jobQueue = new Queue<Job>();
         }
 
         public void ScheduleJob(Job job)
         {
-            jobQueue.Add(job);
+            Debug.Log("Job scheduled");
+            jobQueue.Enqueue(job);
         }
 
         public Job GetJob()
         {
-            if (jobQueue.Count == 0) { return null; }
-
-            Job job = jobQueue[0];
-            jobQueue.RemoveAt(0);
-            return job;
+            if (jobQueue.Count == 0) {
+                Debug.Log("No jobs in queue");
+                return null; }
+            Debug.Log("Dequeue");
+            return jobQueue.Dequeue();
         }
     }
 }

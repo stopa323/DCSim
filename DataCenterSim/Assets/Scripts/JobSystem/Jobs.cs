@@ -1,20 +1,37 @@
-﻿namespace Game.JobSystem
+﻿using UnityEngine;
+using UnityEngine.AI;
+
+namespace Game.JobSystem
 {
-    public interface IJob
-    {
-        void Execute();
-    }
+    public enum JobState { Enqueued, InProgress, Done }
 
-    public class Job : IJob
+    public class Job
     {
-        public Job()
+        private Vector3 destination;
+        private NavMeshAgent agent;
+
+        public JobState state { get; private set; }
+
+        public Job(Vector3 destination)
         {
-
+            this.destination = destination;
+            this.state = JobState.Enqueued;
         }
 
-        public void Execute()
+        public void Execute(NavMeshAgent agent)
         {
-            throw new System.NotImplementedException();
+            this.state = JobState.InProgress;
+            this.agent = agent;
+            this.agent.SetDestination(destination);
+        }
+
+        public bool isFinished()
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance) {
+                state = JobState.Done;
+                return true;
+            }
+            else { return false; }
         }
     }
 }
