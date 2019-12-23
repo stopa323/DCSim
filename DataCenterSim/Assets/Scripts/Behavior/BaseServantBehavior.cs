@@ -13,9 +13,9 @@ public class BaseServantBehavior : MonoBehaviour
     #region Private attributes
     private Animator animator;
 
-    private NavMeshAgent agent;
+    public NavMeshAgent agent;
 
-    private Job currentJob;
+    private IJob currentJob;
     #endregion
 
     #region Public API
@@ -29,6 +29,7 @@ public class BaseServantBehavior : MonoBehaviour
             Debug.Log(string.Format("Job found: {0}", job));
 
             currentJob = job;
+            currentJob.AssignPuppet(this);
             return true;
         }
         else { return false; }
@@ -40,27 +41,22 @@ public class BaseServantBehavior : MonoBehaviour
         animator.SetBool(_WorkingState, true);
     }
 
-    public void ExecuteJob()
+    public void UpdateJobStatus()
     {
-        Debug.Log(string.Format("Executing {0}", currentJob));
-        currentJob.Execute(agent);
+        currentJob.UpdateExecution();
     }
 
     public bool IsJobFinished()
     {
-        Debug.Log("Check JOB");
-        if (currentJob.isFinished())
+        if (currentJob.IsFinished())
         {
-            Debug.Log("JobFinished");
-            //currentJob = null;
             return true;
         }
-        else { Debug.Log("JobInProgress"); return false; }
+        else { return false; }
     }
 
     public void BecomeIdle()
     {
-        Debug.Log("BecomeIdle");
         animator.SetBool(_IdleState, true);
         animator.SetBool(_WorkingState, false);
     }
@@ -69,6 +65,16 @@ public class BaseServantBehavior : MonoBehaviour
     {
         Debug.Log("Finish Job");
         currentJob = null;
+    }
+    
+    public void PickUpPackage()
+    {
+        Debug.Log("Package Picked Up!");
+    }
+
+    public void PlacePackage()
+    {
+        Debug.Log("Package Placed!");
     }
     #endregion
 

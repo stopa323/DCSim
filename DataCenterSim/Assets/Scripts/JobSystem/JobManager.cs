@@ -7,7 +7,7 @@ namespace Game.JobSystem
 {
     public class JobManager : BaseManager
     {
-        private Queue<Job> jobQueue;
+        private Queue<IJob> jobQueue;
 
         public static JobManager Instance { get; private set; }
 
@@ -20,21 +20,18 @@ namespace Game.JobSystem
         protected override void Awake()
         {
             base.Awake();
-            jobQueue = new Queue<Job>();
+            jobQueue = new Queue<IJob>();
         }
 
-        public void ScheduleJob(Job job)
+        public void ScheduleJob(IJob job)
         {
-            Debug.Log("Job scheduled");
             jobQueue.Enqueue(job);
         }
 
-        public Job GetJob()
+        public IJob GetJob()
         {
-            if (jobQueue.Count == 0) {
-                Debug.Log("No jobs in queue");
-                return null; }
-            Debug.Log("Dequeue");
+            if (jobQueue.Count == 0) { return null; }
+            
             return jobQueue.Dequeue();
         }
     }

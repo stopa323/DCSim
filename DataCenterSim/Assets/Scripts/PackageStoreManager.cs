@@ -42,8 +42,8 @@ public class PackageStoreManager : MonoBehaviour
                 placeAtSlot(package, freeSlot);
 
                 // Add new job to the manager
-                Job deliverPartsJob = new Job(package.OrderedItem.transform.position);
-                JobManager.Instance.ScheduleJob(deliverPartsJob);
+                DeliverPartsJob job = new DeliverPartsJob(package.Object, package.OrderedItem);
+                JobManager.Instance.ScheduleJob(job);
             }
             catch (UnityException err) {
                 Debug.LogError(err.Message);

@@ -3,35 +3,73 @@ using UnityEngine.AI;
 
 namespace Game.JobSystem
 {
-    public enum JobState { Enqueued, InProgress, Done }
-
-    public class Job
+    public interface IJob
     {
-        private Vector3 destination;
-        private NavMeshAgent agent;
+        void AssignPuppet(BaseServantBehavior puppet);
+        void UpdateExecution();
+        bool IsFinished();
+    }
 
-        public JobState state { get; private set; }
+    public class DeliverPartsJob : IJob
+    {
+        private GameObject package;
+        private GameObject device;
+        private BaseServantBehavior puppet;
 
-        public Job(Vector3 destination)
+        private enum State { Init, ApproachingPackage, ApproachingDevice, Done };
+        private State state;
+
+        public DeliverPartsJob(GameObject package, GameObject device)
         {
-            this.destination = destination;
-            this.state = JobState.Enqueued;
+            this.package = package;
+            this.device = device;
+            this.puppet = null;
+            this.state = State.Init;
         }
 
-        public void Execute(NavMeshAgent agent)
+        public void AssignPuppet(BaseServantBehavior puppet)
         {
-            this.state = JobState.InProgress;
-            this.agent = agent;
-            this.agent.SetDestination(destination);
+            this.puppet = puppet;
         }
 
-        public bool isFinished()
+        public void UpdateExecution()
         {
-            if (agent.remainingDistance <= agent.stoppingDistance) {
-                state = JobState.Done;
-                return true;
+            switch (state)
+            {
+                case State.Init:
+                    start();
+                    break;
+                case State.ApproachingPackage:
+                    if (hasReachedDestination())
+                    {
+                        puppet.PickUpPackage();
+                        puppet.agent.SetDestination(device.transform.position);
+                        state = State.ApproachingDevice;
+                    }
+                    break;
+                case State.ApproachingDevice:
+                    if (hasReachedDestination())
+                    {
+                        puppet.PlacePackage();
+                        state = State.Done;
+                    }
+                    break;
+                default:
+                    break;
             }
-            else { return false; }
+        }
+
+        public bool IsFinished() { return State.Done == state; }
+
+        private void start()
+        {
+            puppet.agent.SetDestination(package.transform.position);
+            state = State.ApproachingPackage;
+        }
+
+        private bool hasReachedDestination()
+        {
+            return puppet.agent.remainingDistance <= puppet.agent.stoppingDistance;
         }
     }
 }
