@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.Structures;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace Game.JobSystem
@@ -10,19 +11,17 @@ namespace Game.JobSystem
         bool IsFinished();
     }
 
-    public class DeliverPartsJob : IJob
+    public class DeliverPackageJob : IJob
     {
-        private GameObject package;
-        private GameObject device;
+        private Package package;
         private BaseServantBehavior puppet;
 
         private enum State { Init, ApproachingPackage, ApproachingDevice, Done };
         private State state;
 
-        public DeliverPartsJob(GameObject package, GameObject device)
+        public DeliverPackageJob(Package package)
         {
             this.package = package;
-            this.device = device;
             this.puppet = null;
             this.state = State.Init;
         }
@@ -42,8 +41,10 @@ namespace Game.JobSystem
                 case State.ApproachingPackage:
                     if (hasReachedDestination())
                     {
+                        package.Store.PopPackage(package);
+
                         puppet.PickUpPackage();
-                        puppet.agent.SetDestination(device.transform.position);
+                        puppet.agent.SetDestination(package.OrderedItem.transform.position);
                         state = State.ApproachingDevice;
                     }
                     break;
@@ -51,6 +52,10 @@ namespace Game.JobSystem
                     if (hasReachedDestination())
                     {
                         puppet.PlacePackage();
+
+                        var device = package.OrderedItem.GetComponent<BaseDevice>();
+                        device.OnPartsDelivered();
+
                         state = State.Done;
                     }
                     break;
@@ -63,7 +68,7 @@ namespace Game.JobSystem
 
         private void start()
         {
-            puppet.agent.SetDestination(package.transform.position);
+            puppet.agent.SetDestination(package.Store.transform.position);
             state = State.ApproachingPackage;
         }
 

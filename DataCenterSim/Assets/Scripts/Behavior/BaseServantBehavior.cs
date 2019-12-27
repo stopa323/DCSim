@@ -10,8 +10,14 @@ public class BaseServantBehavior : MonoBehaviour
     public static readonly int _WorkingState = Animator.StringToHash("isWorking");
     #endregion
 
+    #region Editor Variables
+    [SerializeField] private GameObject handSocket;
+    [SerializeField] private GameObject packagePrefab;
+    #endregion
+
     #region Private attributes
     private Animator animator;
+    private GameObject carriedPackageObj;
 
     public NavMeshAgent agent;
 
@@ -70,11 +76,13 @@ public class BaseServantBehavior : MonoBehaviour
     public void PickUpPackage()
     {
         Debug.Log("Package Picked Up!");
+        carriedPackageObj = Instantiate(packagePrefab, handSocket.transform);
     }
 
     public void PlacePackage()
     {
         Debug.Log("Package Placed!");
+        Destroy(carriedPackageObj);
     }
     #endregion
 

@@ -39,7 +39,8 @@ namespace Game.Managers
         public void OnOrderDelivered(Order order)
         {
             Debug.Log(string.Format("Sound the alarm! {0} is delivered!", order.Name));
-            store.PushOrder(order);
+            foreach(Package package in order.Items)
+                store.PushPackage(package);
         }
         #endregion
 

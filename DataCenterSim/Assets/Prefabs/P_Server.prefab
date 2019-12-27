@@ -105,5 +105,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66f7a63be8b935449fb415e0cd03c80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  missingPartsMarker: {fileID: 3409668887808421457, guid: 737a6001140da2d44b43572c88a09d58,
+  partsMarkerPrefab: {fileID: 3409668887808421457, guid: 737a6001140da2d44b43572c88a09d58,
     type: 3}

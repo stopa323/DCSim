@@ -1,5 +1,6 @@
 ﻿using Game.JobSystem;
 using Game.Structures;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PackageStoreManager : MonoBehaviour
@@ -21,54 +22,37 @@ public class PackageStoreManager : MonoBehaviour
     private float platformSizeX;
     private float platformSizeZ;
 
-    private Package[,,] platformSlots;
+    // Separated in order to easily dequeue (tail always)
+    private List<Package> packages;
+    private List<GameObject> packageMeshes;
     #endregion
 
     #region Public Members
-    public void PushOrder(Order order)
+    public void PushPackage(Package package)
     {
-        foreach(Package package in order.Items)
-        {
-            try
-            {
-                // This will throw exception if no free slot is found
-                Vector3Int freeSlot = getFreeSlot();
+        // Check if there is place on the store
+        if (packages.Count == packages.Capacity)
+            throw new UnityException("No free space in the store");
 
-                // Update Package with object and place to store
-                GameObject packageObj = Instantiate(packagePrefab, gameObject.transform);
-                packageObj.name = string.Format("{0}_package", 1);
-                package.AssignPackage(packageObj);
+        // Update Package with object and place to store
+        GameObject package_mesh = Instantiate(packagePrefab, gameObject.transform);
+        package_mesh.name = string.Format("{0}_package", 1);
 
-                placeAtSlot(package, freeSlot);
+        place(package, package_mesh);
 
-                // Add new job to the manager
-                DeliverPartsJob job = new DeliverPartsJob(package.Object, package.OrderedItem);
-                JobManager.Instance.ScheduleJob(job);
-            }
-            catch (UnityException err) {
-                Debug.LogError(err.Message);
-                return;
-            }
-        }
+        var job = new DeliverPackageJob(package);
+        JobManager.Instance.ScheduleJob(job);
     }
 
-    public void PopPackage(Vector3Int slot)
+    public void PopPackage(Package package)
     {
-        Debug.Log("Popping...");
-        if (platformSlots[slot.x, slot.y, slot.z] == null) return;
+        packages.Remove(package);
 
-        Destroy(platformSlots[slot.x, slot.y, slot.z].Object);
+        var lastIndex = packageMeshes.Count - 1;
+        var mesh = packageMeshes[lastIndex];
 
-        for (int y = slot.y + 1; y < heightCap; y++)
-        {
-            // Break if there is nothing at current position
-            if (platformSlots[slot.x, y, slot.z] == null) break;
-
-            // Move package one slot down
-            placeAtSlot(platformSlots[slot.x, y, slot.z], 
-                new Vector3Int(slot.x, y - 1, slot.z));
-            platformSlots[slot.x, y, slot.z] = null;
-        }
+        Destroy(mesh);
+        packageMeshes.RemoveAt(lastIndex);
     }
     #endregion
 
@@ -87,17 +71,23 @@ public class PackageStoreManager : MonoBehaviour
    
     private Vector3Int getFreeSlot()
     {
-        for (int y = 0; y < heightCap; y++)
-            for (int x = 0; x < rowCap; x++)
-                for (int z = 0; z < colCap; z++)
-                    if (platformSlots[x, y, z] == null) return new Vector3Int(x, y, z);
-        throw new UnityException("No free slots on platform");
+        int x = packages.Count % rowCap;
+        int z = packages.Count / colCap % rowCap;
+        int y = packages.Count / (rowCap * colCap);
+
+        return new Vector3Int(x, y, z);
     }
     
-    private void placeAtSlot(Package package, Vector3Int slot)
+    // TODO: Is Package ref necessary here? Is is already saved in Job Object and
+    //       we dont need mesh-to-package link as for now.
+    private void place(Package package, GameObject mesh)
     {
-        platformSlots[slot.x, slot.y, slot.z] = package;
-        package.Object.transform.localPosition = getPositionFromSlot(slot);
+        packageMeshes.Add(mesh);
+        mesh.transform.localPosition = getPositionFromSlot(getFreeSlot());
+
+        // Must be called after getFreeSlot, as the method bases on package count
+        packages.Add(package);
+        package.Store = this;
     }
     #endregion
 
@@ -107,7 +97,8 @@ public class PackageStoreManager : MonoBehaviour
         platformSizeX = rowCap * (packageSize + packageInterspace) - packageInterspace;
         platformSizeZ = colCap * (packageSize + packageInterspace) - packageInterspace;
 
-        platformSlots = new Package[rowCap, colCap, heightCap];
+        packages = new List<Package>(rowCap * colCap * heightCap);
+        packageMeshes = new List<GameObject>(rowCap * colCap * heightCap);
     }
     #endregion
 }

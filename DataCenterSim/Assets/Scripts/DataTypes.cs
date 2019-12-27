@@ -30,18 +30,15 @@ namespace Game.Structures
     {
         /* Stores references to all objects involved in end-to-end package 
          * delivery process. */
-        public GameObject GUIElement;   // GUI representation of the item
-        public GameObject OrderedItem;  // Blueprint of the ordered item
-        public GameObject Object;       // Package game object
+        public GameObject GUIElement;           // GUI representation of the item
+        public GameObject OrderedItem;          // Blueprint of the ordered item
+        public PackageStoreManager Store;       // Store Manager assigned when package is delivered
 
         public Package(GameObject guiElement, GameObject item)
         {
             GUIElement = guiElement;
             OrderedItem = item;
-            Object = null;
+            Store = null;
         }
-
-        public void AssignPackage(GameObject package) { Object = package; }
     }
-
 }
