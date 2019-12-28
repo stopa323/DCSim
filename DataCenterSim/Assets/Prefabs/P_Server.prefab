@@ -107,3 +107,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   partsMarkerPrefab: {fileID: 3409668887808421457, guid: 737a6001140da2d44b43572c88a09d58,
     type: 3}
+  constructionTime: 5
+  activeMaterial: {fileID: 2100000, guid: b93a81989b40ef54db0d8b7088ce2d60, type: 2}

@@ -77,4 +77,54 @@ namespace Game.JobSystem
             return puppet.agent.remainingDistance <= puppet.agent.stoppingDistance;
         }
     }
+
+    public class AssembleDeviceJob : IJob
+    {
+        private BaseServantBehavior puppet;
+        private BaseDevice device;
+        private Vector3 devicePosition;
+
+        private enum State { Init, ApproachingDevice, Constructing, Done};
+        private State state;
+
+        public AssembleDeviceJob(GameObject device)
+        {
+            this.devicePosition = device.transform.position;
+            this.device = device.GetComponent<BaseDevice>();
+            this.state = State.Init;
+        }
+
+        public void AssignPuppet(BaseServantBehavior puppet)
+        {
+            this.puppet = puppet;
+        }
+
+        public bool IsFinished()
+        {
+            return device.IsFinished();
+        }
+
+        public void UpdateExecution()
+        {
+            switch (state)
+            {
+                case State.Init:
+                    puppet.agent.SetDestination(devicePosition);
+                    state = State.ApproachingDevice;
+                    break;
+                case State.ApproachingDevice:
+                    if (puppet.agent.remainingDistance <= puppet.agent.stoppingDistance)
+                    {
+                        device.StartConstruction();
+                        state = State.Constructing;
+                    }
+                    break;
+                case State.Constructing:
+                    if (device.IsFinished()) { state = State.Done; }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
