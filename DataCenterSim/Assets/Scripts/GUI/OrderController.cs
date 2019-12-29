@@ -13,8 +13,6 @@ public class OrderController : MonoBehaviour
 
     private Order order;
 
-    private GameObject markerCanvas;
-
     #region Public Methods
     public bool hasFreeSlot()
     {
@@ -42,7 +40,7 @@ public class OrderController : MonoBehaviour
         {
             BaseDevice device = tup.OrderedItem.GetComponent<BaseDevice>();
             if (!device) { throw new MissingComponentException("BaseDevice"); }
-            device.OnSpawn(markerCanvas);
+            device.OnSpawn();
         }
 
         OrderManager.Instance.AddOrder(order);
@@ -62,9 +60,6 @@ public class OrderController : MonoBehaviour
         orderContainer.sizeDelta = new Vector2(
             orderContainer.sizeDelta.x, orderItemHeight);
         order = new Order(MAX_ORDERS);
-
-        // TODO: Move such read-only references to some kind of singleton
-        markerCanvas = GameObject.FindWithTag("MarkerCanvas");
     }
 
 }

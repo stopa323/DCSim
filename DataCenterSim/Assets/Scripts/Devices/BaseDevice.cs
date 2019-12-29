@@ -1,29 +1,28 @@
 ﻿using Game.JobSystem;
+using Game.Managers;
 using UnityEngine;
 
 public class BaseDevice : MonoBehaviour
 {
     [Header("Prefabs")]
     [SerializeField] private GameObject partsMarkerPrefab;
+    [SerializeField] private GameObject progressMarkerPrefab;
 
     [Header("Parameters")]
     [SerializeField] private float constructionTime = 5f;
     [SerializeField] private Material activeMaterial;
 
-    private enum State { Init, Constructing, Active};
     private GameObject partsMarker;
-    private State state;
+    private GameObject progressMarker;
     private bool hasParts;
-    private float constructionTimer;
+    private bool isFinished;
 
-    public void OnSpawn(GameObject markerCanvas) {
+    public void OnSpawn() {
         /*
          * Called by OrderController when device is bought and its blueprint is 
          * spawned on the scene. 
          */
-        partsMarker = Instantiate(partsMarkerPrefab, markerCanvas.transform);
-        Marker marker = partsMarker.GetComponent<Marker>();
-        marker.SetTarget(transform);
+        displayMissingPartsMarker();
     }
 
     public void OnPartsDelivered()
@@ -37,33 +36,40 @@ public class BaseDevice : MonoBehaviour
 
     public void StartConstruction()
     {
-        state = State.Constructing;
-        constructionTimer = 0f;
+        displayProgressMarker();
     }
 
-    public bool IsFinished() { return State.Active == state; }
+    public bool IsFinished() { return isFinished; }
+
+    private void displayMissingPartsMarker()
+    {
+        var canvas = GameStateManager.Instance.MarkerCanvas.transform;
+        partsMarker = Instantiate(partsMarkerPrefab, canvas);
+        Marker marker = partsMarker.GetComponent<Marker>();
+        marker.SetTarget(transform);
+    }
+
+    private void displayProgressMarker()
+    {
+        var canvas = GameStateManager.Instance.MarkerCanvas.transform;
+        progressMarker = Instantiate(progressMarkerPrefab, canvas);
+
+        var progress = progressMarker.GetComponent<ProgressBar>();
+        progress.Populate(transform, 5f, finishConstruction);
+        progress.Trigger();
+    }
+
+    private void finishConstruction()
+    {
+        isFinished = true;
+        var renderer = GetComponent<Renderer>();
+        renderer.material = activeMaterial;
+    }
 
     private void Awake()
     {
         hasParts = false;
-        state = State.Init;
+        isFinished = false;
     }
 
-    private void Update()
-    {
-        switch (state)
-        {
-            case State.Constructing:
-                constructionTimer += Time.deltaTime;
-                if (constructionTimer >= constructionTime)
-                {
-                    state = State.Active;
-                    var renderer = GetComponent<MeshRenderer>();
-                    renderer.material = activeMaterial;
-                }
-                break;
-            default:
-                break;
-        }
-    }
 }
