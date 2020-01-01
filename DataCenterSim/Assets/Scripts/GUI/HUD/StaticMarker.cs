@@ -13,6 +13,11 @@ public class StaticMarker : MonoBehaviour
         this.target = target;
     }
 
+    public void ToggleTooltip(bool active)
+    {
+        tooltip.active = active;
+    }
+
     protected void LateUpdate()
     {
         if (target)
