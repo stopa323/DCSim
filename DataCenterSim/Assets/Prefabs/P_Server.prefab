@@ -107,6 +107,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   partsMarkerPrefab: {fileID: 3409668887808421457, guid: 737a6001140da2d44b43572c88a09d58,
     type: 3}
+  assemblyMarkerPrefab: {fileID: 2666068509316764286, guid: a57099cf9c8af754cabd71fbdcab72d8,
+    type: 3}
   progressMarkerPrefab: {fileID: 1173866241776889207, guid: 32a550e94fa2c4341a8cf70b0de9f0a4,
     type: 3}
   constructionTime: 5

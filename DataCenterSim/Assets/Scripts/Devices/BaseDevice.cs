@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class BaseDevice : MonoBehaviour
 {
-    [Header("Prefabs")]
+    [Header("Markers")]
     [SerializeField] private GameObject partsMarkerPrefab;
+    [SerializeField] private GameObject assemblyMarkerPrefab;
     [SerializeField] private GameObject progressMarkerPrefab;
 
     [Header("Parameters")]
@@ -13,7 +14,9 @@ public class BaseDevice : MonoBehaviour
     [SerializeField] private Material activeMaterial;
 
     private GameObject partsMarker;
+    private GameObject assemblyMarker;
     private GameObject progressMarker;
+
     private bool hasParts;
     private bool isFinished;
 
@@ -32,10 +35,13 @@ public class BaseDevice : MonoBehaviour
 
         var job = new AssembleDeviceJob(gameObject);
         JobManager.Instance.ScheduleJob(job);
+
+        displayAssemblyMarker();
     }
 
     public void StartConstruction()
     {
+        Destroy(assemblyMarker);
         displayProgressMarker();
     }
 
@@ -45,8 +51,16 @@ public class BaseDevice : MonoBehaviour
     {
         var canvas = GameStateManager.Instance.MarkerCanvas.transform;
         partsMarker = Instantiate(partsMarkerPrefab, canvas);
-        Marker marker = partsMarker.GetComponent<Marker>();
-        marker.SetTarget(transform);
+        var marker = partsMarker.GetComponent<StaticMarker>();
+        marker.Populate(transform);
+    }
+
+    private void displayAssemblyMarker()
+    {
+        var canvas = GameStateManager.Instance.MarkerCanvas.transform;
+        assemblyMarker = Instantiate(assemblyMarkerPrefab, canvas);
+        var marker = assemblyMarker.GetComponent<StaticMarker>();
+        marker.Populate(transform);
     }
 
     private void displayProgressMarker()
@@ -54,7 +68,7 @@ public class BaseDevice : MonoBehaviour
         var canvas = GameStateManager.Instance.MarkerCanvas.transform;
         progressMarker = Instantiate(progressMarkerPrefab, canvas);
 
-        var progress = progressMarker.GetComponent<ProgressBar>();
+        var progress = progressMarker.GetComponent<ProgressMarker>();
         progress.Populate(transform, 5f, finishConstruction);
         progress.Trigger();
     }
